@@ -1,7 +1,10 @@
 package org.koliadenko.jms;
 
 import java.util.Properties;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +16,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 @Configuration
 @EnableJms
 @ComponentScan
-public class JMSandMailConfig {
+public class AppConfig {
 
     static final String BROKER_URL = "tcp://localhost:51616";//61ххх почему то заняты, какой-то глюк в винде
     static final String BROKER_USERNAME = "system";
@@ -54,7 +57,7 @@ public class JMSandMailConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("mlecochenko@gmail.com");
-        mailSender.setPassword("paasword12");
+        mailSender.setPassword("11");
 
         //1.нужна настройка, потому что Гугл не пропускает простые подключения. Нужен TLS
         Properties props = mailSender.getJavaMailProperties();
@@ -65,5 +68,10 @@ public class JMSandMailConfig {
         //2ю нужно включать недоверенные приложения в гугле
 
         return mailSender;
+    }
+
+    @Bean
+    public Logger logger() {
+        return LoggerFactory.getLogger("application");
     }
 }

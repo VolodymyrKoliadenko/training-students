@@ -62,3 +62,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 /JMS-mail/target/
+/JMS-mail/nbproject/

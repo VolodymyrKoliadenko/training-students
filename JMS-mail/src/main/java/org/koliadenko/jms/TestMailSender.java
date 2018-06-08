@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class TestMailSender {
 
     @Autowired
-    JavaMailSender mailSender;
+    private JavaMailSender mailSender;
 
     public void send(String to, String subj, String text) {
 
