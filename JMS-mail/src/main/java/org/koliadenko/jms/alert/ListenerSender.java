@@ -22,7 +22,6 @@ public class ListenerSender {
 
         sender.send("vovakk@mail.ru", "jms allert", text);
 
-        //сделай вторйо листенер для логов
     }
 
 }
