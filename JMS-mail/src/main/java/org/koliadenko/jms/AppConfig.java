@@ -57,14 +57,14 @@ public class AppConfig {
         mailSender.setHost("smtp.gmail.com");
         mailSender.setPort(587);
         mailSender.setUsername("mlecochenko@gmail.com");
-        mailSender.setPassword("11");
+        mailSender.setPassword("39");
 
         //1.нужна настройка, потому что Гугл не пропускает простые подключения. Нужен TLS
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true"); //Нужен TLS
-        props.put("mail.debug", "true");
+        //props.put("mail.debug", "true");
         //2ю нужно включать недоверенные приложения в гугле
 
         return mailSender;
