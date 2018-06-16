@@ -20,14 +20,17 @@ public class Main {
             Socket socket = context.createSocket(ZMQ.REP);
             socket.bind("tcp://*:5555");
             System.out.println(socket.getLastEndpoint());
+            
+            (new ClientRun()).run();
 
             while (!Thread.currentThread().isInterrupted()) {
+                System.out.println("__ ruNNNN");
 
                 byte[] reply = socket.recv(0);
 
                 // Print received message
                 System.out.println(
-                        "=> " + ": " + new String(reply, ZMQ.CHARSET));
+                        "MAIN loop=> " + ": " + new String(reply, ZMQ.CHARSET));
 
                 // Send a response
                 String response = "Hello, Vova";
