@@ -63,3 +63,5 @@ $RECYCLE.BIN/
 *.lnk
 /JMS-mail/target/
 /JMS-mail/nbproject/
+/AMQPsimple/target/
+/JeroMQzero/target/
