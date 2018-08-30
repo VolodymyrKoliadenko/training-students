@@ -21,7 +21,7 @@ import lombok.Data;
  * @author koliadenko
  */
 @Entity
-//@Data
+@Data
 public class Message implements Serializable {
 
     @Id
@@ -67,7 +67,7 @@ public class Message implements Serializable {
 
     @Override
     public String toString() {
-        return "Message{" + "id=" + id + ", author=" + author.getName() + ", text=" + text + '}';
+        return id + ". [" + created + "] " + author.getName() + ": " + text;
     }
 
 }

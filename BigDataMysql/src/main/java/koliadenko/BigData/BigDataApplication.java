@@ -17,13 +17,13 @@ public class BigDataApplication {
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
             System.out.println("====================started================");
-            
+
             //FirstInitiator initiator = ctx.getBean(FirstInitiator.class);
 
             //initiator.initUsers(40);
             //initiator.initThemes();
             //initiator.createMessages();
-            
+
             //System.exit(0);
         };
     }

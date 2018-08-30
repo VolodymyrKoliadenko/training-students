@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     List<User> findByName(String name);
 
+    Long countByName(String name);//єто прикол колво юзеров
 }
