@@ -5,8 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
+@EnableTransactionManagement
 public class BigDataApplication {
 
     public static void main(String[] args) {
@@ -18,13 +20,14 @@ public class BigDataApplication {
         return args -> {
             System.out.println("====================started================");
 
-            //FirstInitiator initiator = ctx.getBean(FirstInitiator.class);
+            FirstInitiator initiator = ctx.getBean(FirstInitiator.class);
 
             //initiator.initUsers(40);
             //initiator.initThemes();
             //initiator.createMessages();
+            
 
-            //System.exit(0);
+            //System.exit(0); //НЕ АЗПУСКАЙ здесь потоки нужны еще
         };
     }
 }

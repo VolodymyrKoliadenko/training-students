@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import koliadenko.BigData.entities.Message;
 import koliadenko.BigData.entities.Topic;
 import koliadenko.BigData.entities.User;
@@ -30,12 +31,16 @@ public class FirstInitiator {
 
     Random rnd = new Random();
 
+    private final UserRepository uRepository;
+    private final TopicRepository topicRepository;
+    private final MessageRepository messRepository;
+
     @Autowired
-    private UserRepository uRepository;
-    @Autowired
-    private TopicRepository topicRepository;
-    @Autowired
-    private MessageRepository messRepository;
+    public FirstInitiator(UserRepository uRepository, TopicRepository topicRepository, MessageRepository messRepository) {
+        this.uRepository = uRepository;
+        this.topicRepository = topicRepository;
+        this.messRepository = messRepository;
+    }
 
     protected void initUsers(int n) {
         List<User> users = new ArrayList<>();
@@ -61,33 +66,63 @@ public class FirstInitiator {
 
     protected void createMessages() {
 
-        int N = 2_000;
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //messRepository.deleteAll();
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        int FULL = 29920_000;
 
-        for (int k = 0; k < 1000; k++) { //1300-1800 inserts/second
-            User u = uRepository.findById(rnd.nextInt(49) + 1).get();
-            Topic topic = topicRepository.findById(rnd.nextInt(49) + 1).get();
+        int THREADS = 8;
+        int batch = 5000; //18к пачка на грани проблем
+        int N = FULL / (THREADS * batch);
 
-            Date date = new Date();
 
-            List<Message> batchMes = new ArrayList<>(N);
+        /*
+        ======================================================================================
+        Этот код чуток кривой. Нельзя делать пачку в миллион сразу
+        нужно делить на цикл.
+        
+        ======================================================================================
+         */
+        ExecutorService service = Executors.newFixedThreadPool(THREADS);
+        final CountDownLatch cdl = new CountDownLatch(THREADS);
 
-            long t = System.nanoTime();
+        long t = System.nanoTime();
+        for (int k = 0; k < THREADS; k++) {
+            service.execute(() -> {
 
-            for (int i = 0; i < N; i++) {
-                Message mes = new Message(u, topic, generate(40) + ". " + generate(30), date);
-                batchMes.add(mes);
-            }
-            messRepository.saveAll(batchMes); //это сохранение требует 93% всего времени ЦПУ метода createMessages()
-            //провел исследование. Гигантский стек, ведущий к Хибернейтовскому прокси.
-            System.out.println("===ms: " + (System.nanoTime() - t) / N / 1000_0 / 100.0);
+                List<Message> batchMes;
 
-            System.out.println("=================== Messages exist: " + messRepository.count());
+                for (int z = 0; z < N; z++) {
+                    batchMes = new ArrayList<>(batch);
 
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ex) {
-            }
+                    User u = uRepository.findById(rnd.nextInt(49) + 1).get();
+                    Topic topic = topicRepository.findById(rnd.nextInt(49) + 1).get();
+
+                    Date date = new Date();
+                    for (int i = 0; i < batch; i++) {
+                        Message mes = new Message(u, topic, generate(1).toUpperCase() + generate(15) + ". " + generate(30), date);
+                        batchMes.add(mes);
+                    }
+                    messRepository.saveAll(batchMes); //это сохранение требует 93% всего времени ЦПУ метода createMessages()
+                    //провел исследование. Гигантский стек, ведущий к Хибернейтовскому прокси.
+
+                    if (rnd.nextInt(8) == 0) { //в 8 раз реже, примерно раз на пачку
+                        System.out.println("=================== Messages exist: " + messRepository.count());
+                    }
+                }
+
+                cdl.countDown();
+
+            });
         }
 
+        try {
+            cdl.await();
+        } catch (InterruptedException ex) {
+        }
+        System.out.println((new Date()) + "===ms per insert: " + (System.nanoTime() - t) / FULL / 1000 / 1000.0);
+        System.out.println("=================== Messages exist: " + messRepository.count());
+        service.shutdown();
+        System.exit(0);
     }
 }
