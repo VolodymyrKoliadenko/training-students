@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Game key</title>
+</head>
+<body>
+<table width="100%">
+    <tr>
+        <td>
+            <form action="#" th:action="@{/click}" method="post" th:object="${object1}">
+                <table>
+                    <th:block th:each="prop : ${l1}">
+                        <tr>
+                            <td th:text="${prop.key}">...</td>
+                            <td th:text="${prop.value}">...</td>
+                        </tr>
+
+                    </th:block>
+                </table>
+                <input type="hidden" th:field="*{owner}"/>
+                <input type="text" th:field="*{key}"/>
+                <input type="text" th:field="*{value}"/>
+                <button type="submit">ADD !</button>
+            </form>
+        </td>
+
+
+        <td>
+            <form action="#" th:action="@{/click}" method="post" th:object="${object2}">
+                <table>
+                    <th:block th:each="prop : ${l2}">
+                        <tr>
+                            <td th:text="${prop.key}">...</td>
+                            <td th:text="${prop.value}">...</td>
+                        </tr>
+
+                    </th:block>
+                </table>
+                <input type="hidden" th:field="*{owner}"/>
+                <input type="text" th:field="*{key}"/>
+                <input type="text" th:field="*{value}"/>
+                <button type="submit">ADD !</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
